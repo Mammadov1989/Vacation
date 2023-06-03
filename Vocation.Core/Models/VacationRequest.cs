@@ -4,16 +4,15 @@ using System.Text;
 
 namespace Vocation.Core.Models
 {
-    public class Vacation
+    public class VacationRequest
     {
         public Guid Id { get; set; }
-        public int NumberOfDay { get; set; }
-
-        public Guid PositionId { get; set; }
+        public string  EmployeeName { get; set; }
         public Guid EmployeeId { get; set; }
         public bool Status { get; set; }
-        public string  Notes { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime StartDate { get; set; }
+        public int VacationPeriod { get; set; }
+        public bool DeleteStatus { get; set; }
     }
 }
