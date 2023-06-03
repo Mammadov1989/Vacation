@@ -36,10 +36,10 @@ namespace Vocation.Api.Controllers.Identity
         private readonly IEmployeeRepository _employeeRepository;
 
         public AccountController(IUserService userService, ITokenService tokenService, IConfiguration configuration,
-            IMapper mapper
+            IMapper mapper,
             //IPagePermissionService pagePermissionService,
-            //IEmployeeService employeeService,
-            //IEmployeeRepository employeeRepository
+            IEmployeeService employeeService,
+            IEmployeeRepository employeeRepository
             )
         {
             _userService = userService;
@@ -47,8 +47,8 @@ namespace Vocation.Api.Controllers.Identity
             _configuration = configuration;
             _mapper = mapper;
             //this.pagePermissionService = pagePermissionService;
-            //_employeeService = employeeService;
-            //_employeeRepository = employeeRepository;
+            _employeeService = employeeService;
+            _employeeRepository = employeeRepository;
             _jsonSerializerSettings = new JsonSerializerOptions
             {
                 WriteIndented = true
@@ -120,45 +120,45 @@ namespace Vocation.Api.Controllers.Identity
             return Json(user.Adapt<RegisterViewModel>(), _jsonSerializerSettings);
         }
 
-        //[Authorize]
-        //[Microsoft.AspNetCore.Mvc.HttpGet("[action]")]
-        //public async Task<IActionResult> GetById([FromQuery] string userId)
-        //{
-        //    try
-        //    {
-        //        var result = await _userService.FindByIdAsync(userId);
-        //        return Json(result);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return new UnprocessableEntityResult();
-        //    }
-        //}
+        [Authorize]
+        [Microsoft.AspNetCore.Mvc.HttpGet("[action]")]
+        public async Task<IActionResult> GetById([FromQuery] string userId)
+        {
+            try
+            {
+                var result = await _userService.FindByIdAsync(userId);
+                return Json(result);
+            }
+            catch (Exception e)
+            {
+                return new UnprocessableEntityResult();
+            }
+        }
 
-        //[Authorize]
-        //[HttpDelete("{userId}")]
-        //public async Task<IActionResult> Delete(Guid userId)
-        //{
-        //    if (userId == null) return new StatusCodeResult(500);
+        [Authorize]
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> Delete(Guid userId)
+        {
+            if (userId == null) return new StatusCodeResult(500);
 
-        //    var now = DateTime.Now;
+            var now = DateTime.Now;
 
-        //    ApplicationUser user = new ApplicationUser()
-        //    {
-        //        Id = userId
-        //    };
+            ApplicationUser user = new ApplicationUser()
+            {
+                Id = userId
+            };
 
-        //    try
-        //    {
-        //        var result = await _userService.DeleteAsync(user);
-        //        await _employeeService.Delete(userId.ToString());
-        //        return Ok(result);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return new UnprocessableEntityResult();
-        //    }
-        //}
+            try
+            {
+                var result = await _userService.DeleteAsync(user);
+                await _employeeService.Delete(userId.ToString());
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return new UnprocessableEntityResult();
+            }
+        }
 
         //[Authorize]
         //[HttpPost("[action]")]
@@ -170,21 +170,21 @@ namespace Vocation.Api.Controllers.Identity
         //    return Ok(result);
         //}
 
-        //[HttpPost("Auth")]
-        //public async Task<IActionResult>
-        //    Jwt([FromBody] TokenRequestViewModel model)
-        //{
-        //    // return a generic HTTP Status 500 (Server Error)
-        //    // if the client payload is invalid.
-        //    if (model == null) return new StatusCodeResult(500);
-        //    return model.grant_type switch
-        //    {
-        //        "password" => await GetToken(model),
-        //        "refresh_token" => await RefreshToken(model),
-        //        "sing_out" => await SignOut(),
-        //        _ => new UnauthorizedResult()
-        //    };
-        //}
+        [HttpPost("Auth")]
+        public async Task<IActionResult>
+            Jwt([FromBody] TokenRequestViewModel model)
+        {
+            // return a generic HTTP Status 500 (Server Error)
+            // if the client payload is invalid.
+            if (model == null) return new StatusCodeResult(500);
+            return model.grant_type switch
+            {
+                "password" => await GetToken(model),
+                "refresh_token" => await RefreshToken(model),
+                "sing_out" => await SignOut(),
+                _ => new UnauthorizedResult()
+            };
+        }
 
         //[Authorize]
         //[HttpGet("[action]")]
@@ -201,14 +201,14 @@ namespace Vocation.Api.Controllers.Identity
         //    return Json(model);
         //}
 
-        //[Authorize]
-        //[HttpPost("[action]")]
-        //public async Task<IActionResult> SignOut([FromBody] TokenRequestViewModel viewModel)
-        //{
-        //    await HttpContext.SignOutAsync();
-        //    _tokenService.RemoveByRefreshToken(viewModel.refresh_token);
-        //    return Ok();
-        //}
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SignOut([FromBody] TokenRequestViewModel viewModel)
+        {
+            await HttpContext.SignOutAsync();
+            _tokenService.RemoveByRefreshToken(viewModel.refresh_token);
+            return Ok();
+        }
 
         //[Authorize]
         //[HttpPut("[action]")]
@@ -249,62 +249,62 @@ namespace Vocation.Api.Controllers.Identity
         //    }
         //}
 
-        //[Authorize]
-        //[HttpPut("Update")]
-        //public async Task<IActionResult> Update([FromBody] RegisterViewModel model)
-        //{
-        //    if (model == null)
-        //    {
-        //        return new StatusCodeResult(500);
-        //    }
+        [Authorize]
+        [HttpPut("Update")]
+        public async Task<IActionResult> Update([FromBody] RegisterViewModel model)
+        {
+            if (model == null)
+            {
+                return new StatusCodeResult(500);
+            }
 
-        //    var user = await _userService.FindByEmailAsync(model.Email);
+            var user = await _userService.FindByEmailAsync(model.Email);
 
-        //    if (user != null && user.Id.ToString() != model.Id)
-        //    {
-        //        return StatusCode(208);
-        //    }
+            if (user != null && user.Id.ToString() != model.Id)
+            {
+                return StatusCode(208);
+            }
 
-        //    user = await _userService.FindByPhoneNumberAsync(model.PhoneNumber);
+            user = await _userService.FindByPhoneNumberAsync(model.PhoneNumber);
 
-        //    if (user != null && user.Id.ToString() != model.Id)
-        //    {
-        //        return StatusCode(209);
-        //    }
+            if (user != null && user.Id.ToString() != model.Id)
+            {
+                return StatusCode(209);
+            }
 
-        //    var existUser = await _userService.FindByIdAsync(model.Id);
+            var existUser = await _userService.FindByIdAsync(model.Id);
 
-        //    var now = DateTime.Now;
+            var now = DateTime.Now;
 
-        //    ApplicationUser userRequest = new ApplicationUser()
-        //    {
-        //        Id = Guid.Parse(model.Id),
-        //        SecurityStamp = Guid.NewGuid().ToString(),
-        //        UserName = model.UserName,
-        //        Email = model.Email,
-        //        CreatedDate = now,
-        //        LastModifiedDate = now,
-        //        EmailConfirmed = true,
-        //        LockoutEnabled = false,
-        //        DisplayName = model.DisplayName,
-        //        PhoneNumber = model.PhoneNumber,
-        //        PasswordHash = existUser.PasswordHash
-        //    };
+            ApplicationUser userRequest = new ApplicationUser()
+            {
+                Id = Guid.Parse(model.Id),
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.UserName,
+                Email = model.Email,
+                CreatedDate = now,
+                LastModifiedDate = now,
+                EmailConfirmed = true,
+                LockoutEnabled = false,
+                DisplayName = model.DisplayName,
+                PhoneNumber = model.PhoneNumber,
+                PasswordHash = existUser.PasswordHash
+            };
 
-        //    model.Employee.Name = existUser.DisplayName;
+            model.Employee.Name = existUser.DisplayName;
 
-        //    try
-        //    {
-        //        var result = await _userService.UpdateAsync(userRequest);
-        //        await _employeeService.Update(model.Employee);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return new UnprocessableEntityResult();
-        //    }
+            try
+            {
+                var result = await _userService.UpdateAsync(userRequest);
+                await _employeeService.Update(model.Employee);
+            }
+            catch (Exception e)
+            {
+                return new UnprocessableEntityResult();
+            }
 
-        //    return Json(userRequest.Adapt<RegisterViewModel>(), _jsonSerializerSettings);
-        //}
+            return Json(userRequest.Adapt<RegisterViewModel>(), _jsonSerializerSettings);
+        }
 
 
         //[Authorize]
@@ -433,168 +433,168 @@ namespace Vocation.Api.Controllers.Identity
         ////    return Ok(result);
         ////}
 
-        ////[Authorize]
-        ////[HttpGet("[action]")]
-        ////public IEnumerable<AppUserToken> GetAllTokens()
-        ////{
-        ////    var result = _tokenService.FindAll();
-        ////    return result;
-        ////}
-
-        //private async Task<IActionResult> SignOut()
+        //[Authorize]
+        //[HttpGet("[action]")]
+        //public IEnumerable<AppUserToken> GetAllTokens()
         //{
-        //    await HttpContext.SignOutAsync();
-        //    return Ok();
+        //    var result = _tokenService.FindAll();
+        //    return result;
         //}
 
-        //private async Task<IActionResult>
-        //    GetToken(TokenRequestViewModel model)
-        //{
-        //    try
-        //    {
-        //        // check if there's an user with the given username
-        //        var user = await
-        //            _userService.FindByNameAsync(model.username);
-        //        // fallback to support e-mail address instead of username
-        //        if (user == null && model.username.Contains("@"))
-        //            user = await
-        //                _userService.FindByEmailAsync(model.username);
-        //        if (user == null
-        //            || !await _userService.CheckPasswordAsync(user,
-        //                model.password))
-        //        {
-        //            // user does not exists or password mismatch
-        //            return new UnauthorizedResult();
-        //        }
+        private async Task<IActionResult> SignOut()
+        {
+            await HttpContext.SignOutAsync();
+            return Ok();
+        }
 
-        //        var employee = await _employeeRepository.GetByUserIdAsync(user.Id.ToString());
+        private async Task<IActionResult>
+            GetToken(TokenRequestViewModel model)
+        {
+            try
+            {
+                // check if there's an user with the given username
+                var user = await
+                    _userService.FindByNameAsync(model.username);
+                // fallback to support e-mail address instead of username
+                if (user == null && model.username.Contains("@"))
+                    user = await
+                        _userService.FindByEmailAsync(model.username);
+                if (user == null
+                    || !await _userService.CheckPasswordAsync(user,
+                        model.password))
+                {
+                    // user does not exists or password mismatch
+                    return new UnauthorizedResult();
+                }
 
-        //        if (user.Blocked || !employee.Active)
-        //        {
-        //            return new UnauthorizedResult();
-        //        }
+                var employee = await _employeeRepository.GetByUserIdAsync(user.Id.ToString());
 
-        //        // username & password matches: create the refresh token
-        //        var refreshToken = CreateRefreshToken(model.provider_id, user.Id.ToString(), model.username);
+                //if (user.Blocked || !employee.Active)
+                //{
+                //    return new UnauthorizedResult();
+                //}
 
-        //        // delete user token if it is exist in DB
-        //        _tokenService.Remove(new ApplicationUserToken
-        //        {
-        //            LoginProvider = model.provider_id,
-        //            UserId = user.Id.ToString(),
-        //            Name = model.username
-        //        });
+                // username & password matches: create the refresh token
+                var refreshToken = CreateRefreshToken(model.provider_id, user.Id.ToString(), model.username);
 
-        //        // add the new refresh token to the DB
-        //        _tokenService.Add(refreshToken);
+                // delete user token if it is exist in DB
+                _tokenService.Remove(new ApplicationUserToken
+                {
+                    LoginProvider = model.provider_id,
+                    UserId = user.Id.ToString(),
+                    Name = model.username
+                });
 
-        //        // create & return the access token
-        //        var token = await CreateAccessToken(user, refreshToken.Value);
-        //        return Json(token);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new UnauthorizedResult();
-        //    }
-        //}
+                // add the new refresh token to the DB
+                _tokenService.Add(refreshToken);
 
-        //private async Task<IActionResult> RefreshToken(TokenRequestViewModel model)
-        //{
-        //    try
-        //    {
-        //        var rt = _tokenService.FindByKeys(model.provider_id, model.refresh_token);
+                // create & return the access token
+                var token = await CreateAccessToken(user, refreshToken.Value);
+                return Json(token);
+            }
+            catch (Exception ex)
+            {
+                return new UnauthorizedResult();
+            }
+        }
 
-        //        if (rt == null)
-        //        {
-        //            return new UnauthorizedResult();
-        //        }
+        private async Task<IActionResult> RefreshToken(TokenRequestViewModel model)
+        {
+            try
+            {
+                var rt = _tokenService.FindByKeys(model.provider_id, model.refresh_token);
 
-        //        var user = await _userService.FindByIdAsync(rt.UserId);
+                if (rt == null)
+                {
+                    return new UnauthorizedResult();
+                }
 
-        //        if (user == null)
-        //        {
-        //            return new UnauthorizedResult();
-        //        }
+                var user = await _userService.FindByIdAsync(rt.UserId);
 
-        //        var rtNew = CreateRefreshToken(rt.LoginProvider, rt.UserId, user.UserName);
+                if (user == null)
+                {
+                    return new UnauthorizedResult();
+                }
 
-        //        _tokenService.Remove(rt);
-        //        _tokenService.Add(rtNew);
+                var rtNew = CreateRefreshToken(rt.LoginProvider, rt.UserId, user.UserName);
 
-        //        var response = await CreateAccessToken(user, rtNew.Value);
+                _tokenService.Remove(rt);
+                _tokenService.Add(rtNew);
 
-        //        return Json(response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new UnauthorizedResult();
-        //    }
-        //}
+                var response = await CreateAccessToken(user, rtNew.Value);
 
-        //private ApplicationUserToken CreateRefreshToken(string clientId, string userId, string name)
-        //{
-        //    return new ApplicationUserToken()
-        //    {
-        //        LoginProvider = clientId,
-        //        UserId = userId,
-        //        Name = name,
-        //        Type = 0,
-        //        Value = Guid.NewGuid().ToString("N"),
-        //        AddedDate = DateTime.UtcNow
-        //    };
-        //}
+                return Json(response);
+            }
+            catch (Exception ex)
+            {
+                return new UnauthorizedResult();
+            }
+        }
 
-        //private async Task<TokenResponseViewModel> CreateAccessToken(ApplicationUser user, string
-        //    refreshToken)
-        //{
-        //    var now = DateTime.UtcNow;
+        private ApplicationUserToken CreateRefreshToken(string clientId, string userId, string name)
+        {
+            return new ApplicationUserToken()
+            {
+                LoginProvider = clientId,
+                UserId = userId,
+                Name = name,
+                Type = 0,
+                Value = Guid.NewGuid().ToString("N"),
+                AddedDate = DateTime.UtcNow
+            };
+        }
 
-        //    // add the registered claims for JWT (RFC7519).
-        //    // For more info, see https://tools.ietf.org/html/rfc7519#section-4.1
-        //    var claims = new List<Claim>
-        //    {
-        //        new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-        //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        //        new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUnixTimeSeconds().ToString()),
-        //        new Claim(JwtRegisteredClaimNames.GivenName, user.DisplayName.ToString()),
-        //        // TODO: add additional claims here
-        //    };
+        private async Task<TokenResponseViewModel> CreateAccessToken(ApplicationUser user, string
+            refreshToken)
+        {
+            var now = DateTime.UtcNow;
 
-        //    var roles = _userService.GetRolesAsync(user).Result;
+            // add the registered claims for JWT (RFC7519).
+            // For more info, see https://tools.ietf.org/html/rfc7519#section-4.1
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUnixTimeSeconds().ToString()),
+                new Claim(JwtRegisteredClaimNames.GivenName, user.DisplayName.ToString()),
+                // TODO: add additional claims here
+            };
 
-        //    if (roles != null && roles.Count > 0)
-        //    {
-        //        claims.AddRange(roles.Select(x => new Claim(ClaimTypes.Role, x)));
-        //    }
+            var roles = _userService.GetRolesAsync(user).Result;
 
-        //    var disabledPages = await pagePermissionService.GetAllDisabledPages();
+            if (roles != null && roles.Count > 0)
+            {
+                claims.AddRange(roles.Select(x => new Claim(ClaimTypes.Role, x)));
+            }
 
-        //    if (disabledPages != null && disabledPages.Count > 0)
-        //    {
-        //        claims.AddRange(disabledPages.Select(i => new Claim("DisabledPages", i.PageKey)));
-        //    }
+            //var disabledPages = await pagePermissionService.GetAllDisabledPages();
 
-        //    var tokenExpirationMins = _configuration.GetValue<int>("Auth:Jwt:TokenExpirationInMinutes");
-        //    var issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Auth:Jwt:Key"]));
+            //if (disabledPages != null && disabledPages.Count > 0)
+            //{
+            //    claims.AddRange(disabledPages.Select(i => new Claim("DisabledPages", i.PageKey)));
+            //}
 
-        //    var token = new JwtSecurityToken(
-        //        issuer: _configuration["Auth:Jwt:Issuer"],
-        //        audience: _configuration["Auth:Jwt:Audience"],
-        //        claims: claims.ToArray(),
-        //        notBefore: now,
-        //        expires: now.Add(TimeSpan.FromMinutes(tokenExpirationMins)),
-        //        signingCredentials: new SigningCredentials(
-        //            issuerSigningKey, SecurityAlgorithms.HmacSha256)
-        //    );
+            var tokenExpirationMins = _configuration.GetValue<int>("Auth:Jwt:TokenExpirationInMinutes");
+            var issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Auth:Jwt:Key"]));
 
-        //    var encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Auth:Jwt:Issuer"],
+                audience: _configuration["Auth:Jwt:Audience"],
+                claims: claims.ToArray(),
+                notBefore: now,
+                expires: now.Add(TimeSpan.FromMinutes(tokenExpirationMins)),
+                signingCredentials: new SigningCredentials(
+                    issuerSigningKey, SecurityAlgorithms.HmacSha256)
+            );
 
-        //    return new TokenResponseViewModel()
-        //    {
-        //        token = encodedToken,
-        //        expiration = tokenExpirationMins,
-        //        refresh_token = refreshToken
-        //    };
-        //}
+            var encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return new TokenResponseViewModel()
+            {
+                token = encodedToken,
+                expiration = tokenExpirationMins,
+                refresh_token = refreshToken
+            };
+        }
     }
 }
