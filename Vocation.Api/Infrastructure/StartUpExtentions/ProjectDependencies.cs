@@ -7,6 +7,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Vocation.Repository.Infrastucture;
+using Vocation.Repository.Repositories.Identity;
+using Vocation.Service.Services.Identity;
 
 namespace Vocation.Api.Infrastructure.StartUpExtentions
 {
@@ -29,7 +31,7 @@ namespace Vocation.Api.Infrastructure.StartUpExtentions
                 .Where(c => c.Name.EndsWith("Query"))
                 .AsPublicImplementedInterfaces(ServiceLifetime.Scoped);
 
-            var serviceAssembly = Assembly.GetAssembly(typeof(TokenService.Service.Identity.TokenService));
+            var serviceAssembly = Assembly.GetAssembly(typeof(TokenService));
 
             services.RegisterAssemblyPublicNonGenericClasses(serviceAssembly)
                 .Where(c => c.Name.EndsWith("Service"))

@@ -44,10 +44,10 @@ namespace Vocation.Api
 
             //services.AddAutoMapper(typeof(Startup));
 
-            services.AddSignalR(e =>
-            {
-                e.MaximumReceiveMessageSize = 102400000;
-            });
+            //services.AddSignalR(e =>
+            //{
+            //    e.MaximumReceiveMessageSize = 102400000;
+            //});
 
             services.AddControllers();
 
@@ -57,7 +57,7 @@ namespace Vocation.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HR Api", Version = "1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Vacation Api", Version = "1" });
 
                 var securitySchema = new OpenApiSecurityScheme
                 {
@@ -89,15 +89,29 @@ namespace Vocation.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Vacation Api V1");
+            });
+
 
             app.UseRouting();
+            app.UseStaticFiles();
+            app.UseCors("EnableCORS");
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
+            //app.UseEndpoints(routes =>
+            //{
+            //    routes.MapHub<OperationHub>("/hubs/operation");
+            //});
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health").RequireAuthorization();
             });
         }
     }
