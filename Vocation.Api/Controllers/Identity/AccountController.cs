@@ -16,6 +16,10 @@ using Vocation.Service.Services.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Vocation.Service.Services;
+using Vocation.Repository.Repositories;
+using Mapster;
+using Vocation.Core.Models;
 
 namespace Vocation.Api.Controllers.Identity
 {
@@ -28,8 +32,8 @@ namespace Vocation.Api.Controllers.Identity
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         //private readonly IPagePermissionService pagePermissionService;
-        //private readonly IEmployeeService _employeeService;
-        //private readonly IEmployeeRepository _employeeRepository;
+        private readonly IEmployeeService _employeeService;
+        private readonly IEmployeeRepository _employeeRepository;
 
         public AccountController(IUserService userService, ITokenService tokenService, IConfiguration configuration,
             IMapper mapper
@@ -51,70 +55,70 @@ namespace Vocation.Api.Controllers.Identity
             };
         }
 
-        //[HttpPut]
-        //public async Task<IActionResult> Put([FromBody] RegisterViewModel model)
-        //{
-        //    if (model == null)
-        //    {
-        //        return new StatusCodeResult(500);
-        //    }
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] RegisterViewModel model)
+        {
+            if (model == null)
+            {
+                return new StatusCodeResult(500);
+            }
 
-        //    var user = await _userService.FindByEmailAsync(model.Email);
+            var user = await _userService.FindByEmailAsync(model.Email);
 
-        //    if (user != null)
-        //    {
-        //        return StatusCode(208);
-        //    }
+            if (user != null)
+            {
+                return StatusCode(208);
+            }
 
-        //    user = await _userService.FindByPhoneNumberAsync(model.PhoneNumber);
+            user = await _userService.FindByPhoneNumberAsync(model.PhoneNumber);
 
-        //    if (user != null)
-        //    {
-        //        return StatusCode(209);
-        //    }
+            if (user != null)
+            {
+                return StatusCode(209);
+            }
 
-        //    var now = DateTime.Now;
+            var now = DateTime.Now;
 
-        //    user = new ApplicationUser()
-        //    {
-        //        SecurityStamp = Guid.NewGuid().ToString(),
-        //        UserName = model.UserName,
-        //        Email = model.Email,
-        //        CreatedDate = now,
-        //        LastModifiedDate = now,
-        //        EmailConfirmed = true,
-        //        LockoutEnabled = false,
-        //        DisplayName = model.DisplayName,
-        //        PhoneNumber = model.PhoneNumber
-        //    };
+            user = new ApplicationUser()
+            {
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.UserName,
+                Email = model.Email,
+                CreatedDate = now,
+                LastModifiedDate = now,
+                EmailConfirmed = true,
+                LockoutEnabled = false,
+                DisplayName = model.DisplayName,
+                PhoneNumber = model.PhoneNumber
+            };
 
-        //    Employee employee = model.Employee;
-        //    employee.Name = model.DisplayName;
-        //    var passwordErros = await _userService.ValidatePassword(model.Password);
+            Employee employee = model.Employee;
+            employee.Name = model.DisplayName;
+            var passwordErros = await _userService.ValidatePassword(model.Password);
 
-        //    if (passwordErros != null)
-        //    {
-        //        return BadRequest(passwordErros);
-        //    }
+            if (passwordErros != null)
+            {
+                return BadRequest(passwordErros);
+            }
 
-        //    try
-        //    {
-        //        var result = await _userService.CreateAsync(user, model.Password);
-        //        var data = await _userService.GetAllUsers(0, 1);
-        //        employee.UserId = data.List.First().Id;
+            try
+            {
+                var result = await _userService.CreateAsync(user, model.Password);
+                var data = await _userService.GetAllUsers(0, 1);
+                employee.UserId = data.List.First().Id;
 
-        //        await _employeeService.Add(employee);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return new UnprocessableEntityResult();
-        //    }
+                await _employeeService.Add(employee);
+            }
+            catch (Exception e)
+            {
+                return new UnprocessableEntityResult();
+            }
 
 
-        //    await _userService.AddToRoleAsync(user, "RegisteredUser");
+            await _userService.AddToRoleAsync(user, "RegisteredUser");
 
-        //    return Json(user.Adapt<RegisterViewModel>(), _jsonSerializerSettings);
-        //}
+            return Json(user.Adapt<RegisterViewModel>(), _jsonSerializerSettings);
+        }
 
         //[Authorize]
         //[Microsoft.AspNetCore.Mvc.HttpGet("[action]")]

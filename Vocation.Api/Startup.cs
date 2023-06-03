@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Vocation.Api.Helpers.StartupDependencies;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -7,11 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Vocation.Api.Helpers.StartupDependencies;
 using Vocation.Api.Infrastructure.StartUpExtentions;
 
 namespace Vocation.Api
@@ -42,7 +43,7 @@ namespace Vocation.Api
 
             services.AddAspNetIdentityDependencies(Configuration);
 
-            //services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(typeof(Startup));
 
             //services.AddSignalR(e =>
             //{

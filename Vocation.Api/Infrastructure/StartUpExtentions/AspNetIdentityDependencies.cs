@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Vocation.Repository.Infrastucture.Identity;
+using Vocation.Core.Models.Identity;
 
 namespace Vocation.Api.Infrastructure.StartUpExtentions
 {
@@ -15,20 +18,20 @@ namespace Vocation.Api.Infrastructure.StartUpExtentions
         public static IServiceCollection AddAspNetIdentityDependencies(this IServiceCollection services,
           IConfiguration configuration)
         {
-            //services.AddTransient<IHrUserStore<ApplicationUser>, UserStore>();
-            //services.AddTransient<IHrRoleStore<ApplicationRole>, RoleStore>();
-            //services.AddTransient<IUserStore<ApplicationUser>, UserStore>();
-            //services.AddTransient<IRoleStore<ApplicationRole>, RoleStore>();
+            services.AddTransient<IVacUserStore<ApplicationUser>, UserStore>();
+            services.AddTransient<IVacRoleStore<ApplicationRole>, RoleStore>();
+            services.AddTransient<IUserStore<ApplicationUser>, UserStore>();
+            services.AddTransient<IRoleStore<ApplicationRole>, RoleStore>();
 
-            //services.AddIdentity<ApplicationUser, ApplicationRole>(opts =>
-            //{
-            //    opts.Password.RequireDigit = false;
-            //    opts.Password.RequireLowercase = false;
-            //    opts.Password.RequireUppercase = true;
-            //    opts.Password.RequireNonAlphanumeric = false;
-            //    opts.Password.RequiredLength = 7;
-            //}).AddUserManager<HrUserManager>().AddRoleManager<HrRoleManager>()
-            //    .AddDefaultTokenProviders();
+            services.AddIdentity<ApplicationUser, ApplicationRole>(opts =>
+            {
+                opts.Password.RequireDigit = false;
+                opts.Password.RequireLowercase = false;
+                opts.Password.RequireUppercase = true;
+                opts.Password.RequireNonAlphanumeric = false;
+                opts.Password.RequiredLength = 7;
+            }).AddUserManager<VacUserManager>().AddRoleManager<VacRoleManager>()
+                .AddDefaultTokenProviders();
 
             services.AddAuthentication(opts =>
             {

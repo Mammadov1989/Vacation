@@ -19,6 +19,7 @@ namespace Vocation.Api.Controllers
             _departmentService = departmentService;
         }
 
+        [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
             var result = await _departmentService.GetAll();

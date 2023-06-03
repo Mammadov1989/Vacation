@@ -12,7 +12,7 @@ using Vocation.Core.Models.Identity;
 
 namespace Vocation.Repository.Infrastucture.Identity
 {
-    public interface IHrUserStore<TUser> : IUserStore<TUser> where TUser : class
+    public interface IVacUserStore<TUser> : IUserStore<TUser> where TUser : class
     {
         Task<ApplicationUser> FindUniqueByNameAsync(string normalizedUserName, string userId, CancellationToken cancellationToken);
         Task<ApplicationUser> FindByFullNameAsync(string fullName, CancellationToken cancellationToken);
@@ -23,7 +23,7 @@ namespace Vocation.Repository.Infrastucture.Identity
         Task<ApplicationUser> FindByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken);
     }
 
-    public class UserStore : IHrUserStore<ApplicationUser>, IUserEmailStore<ApplicationUser>, IUserPhoneNumberStore<ApplicationUser>,
+    public class UserStore : IVacUserStore<ApplicationUser>, IUserEmailStore<ApplicationUser>, IUserPhoneNumberStore<ApplicationUser>,
        IUserTwoFactorStore<ApplicationUser>, IUserPasswordStore<ApplicationUser>, IUserRoleStore<ApplicationUser>, IUserAuthenticationTokenStore<ApplicationUserToken>
     {
         private readonly string _connectionString;
