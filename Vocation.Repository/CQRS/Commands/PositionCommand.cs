@@ -8,13 +8,14 @@ using Vocation.Repository.Infrastucture;
 
 namespace Vocation.Repository.CQRS.Commands
 {
-    public interface IPositionComand
+    public interface IPositionCommand
     {
         Task<Guid> Add(Position model);
         Task Update(Position model);
+        Task<bool> DeleteAsync(string id);
     }
 
-    public class PositionCommand : IPositionComand
+    public class PositionCommand : IPositionCommand
     {
 
         private readonly IUnitOFWork _unitOfWork;
@@ -34,6 +35,8 @@ namespace Vocation.Repository.CQRS.Commands
         private string _updateSql = $@"UPDATE Positions SET 
                                     Name = @{nameof(Position.Name)}
                                     WHERE Id = @{nameof(Department.Id)}";
+
+        private string _deleteSql = $@"UPDATE Positions SET DeleteStatus=1 WHERE Id=@Id";
 
         public async Task<Guid> Add(Position model)
         {
@@ -62,5 +65,18 @@ namespace Vocation.Repository.CQRS.Commands
             }
         }
 
+        public async Task<bool> DeleteAsync(string id)
+        {
+            try
+            {
+                await _unitOfWork.GetConnection().ExecuteAsync(_deleteSql, new { id }, _unitOfWork.GetTransaction());
+                return true;
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }
