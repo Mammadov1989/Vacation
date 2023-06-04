@@ -15,8 +15,8 @@ namespace Vocation.Service.Services
         Task<IEnumerable<Position>> GetAll();
         Task<Position> GetById(string id);
         Task<ListResult<Position>> GetPaginationAsync(string searchtext, int offset, int limit);
-        Task<Position> Add(Position currency);
-        Task Update(Position employeePosition);
+        Task<Guid> Add(Position currency);
+        Task<IEnumerable<Position>> Update(Position employeePosition);
         Task<bool> Delete(string id);
     }
 
@@ -62,7 +62,7 @@ namespace Vocation.Service.Services
             }
         }
 
-        public async Task<Position> Add(Position employeePosition)
+        public async Task<Guid> Add(Position employeePosition)
         {
             await using var transaction = _unitOfWork.BeginTransaction();
             try
@@ -93,7 +93,7 @@ namespace Vocation.Service.Services
             }
         }
 
-        public async Task Update(Position employeePosition)
+        public async Task<IEnumerable<Position>> Update(Position employeePosition)
         {
             await using var transaction = _unitOfWork.BeginTransaction();
             try
@@ -131,6 +131,8 @@ namespace Vocation.Service.Services
 
                 //}
                 await _employeePositionRepository.UpdateAsync(employeePosition);
+                var data = await _employeePositionRepository.GetAllAsync();
+                return data;
                 _unitOfWork.SaveChanges();
             }
             catch (Exception ex)

@@ -28,14 +28,13 @@ namespace Vocation.Repository.CQRS.Commands
                                                @{nameof(Department.FullName)},
                                                @{nameof(Department.Notes)},
                                                @{nameof(Department.CreatedDate)},
-                                               0,
-                                               NULL)
+                                               0)
         ";
 
         private string _updateSql = $@"UPDATE Departments SET 
                                     ShortName = @{nameof(Department.ShortName)},
                                     FullName = @{nameof(Department.FullName)},
-                                    Notes = @{nameof(Department.Notes)},
+                                    Notes = @{nameof(Department.Notes)}
                                     WHERE Id = @{nameof(Department.Id)}";
 
         public async Task<Guid> Add(Department model)

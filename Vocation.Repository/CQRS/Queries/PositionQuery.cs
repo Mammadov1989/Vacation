@@ -19,18 +19,18 @@ namespace Vocation.Repository.CQRS.Queries
     {
         private readonly IUnitOFWork unitOfWork;
 
-        private readonly string GetAllSql = "SELECT * FROM EMPLOYEEPOSITION WHERE DELETESTATUS=0 ORDER BY ROWNUM DESC";
+        private readonly string GetAllSql = "SELECT * FROM Positions WHERE DELETESTATUS=0 ";
 
-        private readonly string GetPaginationSql = @"SELECT * FROM EMPLOYEEPOSITION
+        private readonly string GetPaginationSql = @"SELECT * FROM Positions
 		                                                    WHERE DELETESTATUS=0  
 		                                                    ORDER BY ROWNUM DESC OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
                                 
 		                                                    SELECT COUNT(Id) TotalCount
-		                                                    FROM  EMPLOYEEPOSITION
-		                                                    WHERE DELETESTATUS = 0
+		                                                    FROM  Positions
+		                                                    WHERE DeleteStatus = 0
                                                             ";
 
-        private readonly string GetByIdSql = "SELECT * FROM EMPLOYEEPOSITION WHERE DELETESTATUS=0 AND ID=@Id";
+        private readonly string GetByIdSql = "SELECT * FROM Positions WHERE DeleteStatus=0 AND Id=@Id";
 
         private readonly string GetFullSearchSql = @"DECLARE @searchtext NVARCHAR(MAX) SET @searchtext='%' + @search + '%'
                                                     SELECT * FROM EmployeePosition WHERE DeleteStatus=0 and

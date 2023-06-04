@@ -11,8 +11,8 @@ namespace Vocation.Repository.Repositories
 {
     public interface IPositionRepository
     {
-        Task<Position> AddAsync(Position item);
-        Task<bool> UpdateAsync(Position item);
+        Task<Guid> AddAsync(Position item);
+        Task UpdateAsync(Position item);
         Task<bool> DeleteAsync(string id);
         Task<IEnumerable<Position>> GetAllAsync();
         Task<ListResult<Position>> GetPaginationAsync(string searchtext, int offset, int limit);
@@ -20,18 +20,18 @@ namespace Vocation.Repository.Repositories
     }
     public class PositionRepository : IPositionRepository
     {
-        private readonly IPostionCommand employeePostionCommand;
+        private readonly IPositionCommand employeePostionCommand;
         private readonly IPositionQuery employeePositionQuery;
 
-        public PositionRepository(IPostionCommand employeePostionCommand, IPositionQuery employeePositionQuery)
+        public PositionRepository(IPositionCommand employeePostionCommand, IPositionQuery employeePositionQuery)
         {
             this.employeePostionCommand = employeePostionCommand;
             this.employeePositionQuery = employeePositionQuery;
         }
 
-        public async Task<Position> AddAsync(Position item)
+        public async Task<Guid> AddAsync(Position item)
         {
-            var data = await employeePostionCommand.AddAsync(item);
+            var data = await employeePostionCommand.Add(item);
             return data;
         }
 
@@ -59,10 +59,9 @@ namespace Vocation.Repository.Repositories
             return data;
         }
 
-        public async Task<bool> UpdateAsync(Position item)
+        public async Task UpdateAsync(Position item)
         {
-            var result = await employeePostionCommand.UpdateAsync(item);
-            return result;
+             await employeePostionCommand.Update(item);
         }
     }
 }
