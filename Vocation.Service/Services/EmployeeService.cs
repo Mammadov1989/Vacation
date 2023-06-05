@@ -55,6 +55,7 @@ namespace Vocation.Service.Services
             try
             {
                 var result = await _employeeRepository.GetByIdAsync(id);
+                _unitOfWork.SaveChanges();
                 return result;
             }
             catch
@@ -71,7 +72,9 @@ namespace Vocation.Service.Services
             {
                 var data = await _employeeRepository.AddAsync(employee);
                 var result = await _employeeRepository.GetByIdAsync(data.ToString());
-                return null;
+                _unitOfWork.SaveChanges();
+
+                return result;
             }
             catch (Exception ex)
             {

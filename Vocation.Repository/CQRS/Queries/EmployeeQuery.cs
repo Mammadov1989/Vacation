@@ -32,14 +32,10 @@ namespace Vocation.Repository.CQRS.Queries
                                                   E.*, 
                                                   EP.[NAME] POSITION  
                                                 FROM 
-                                                  EMPLOYEES E 
-                                                  LEFT JOIN CITIES CC ON E.CITYID = CC.ID 
+                                                  EMPLOYEE E 
                                                   LEFT JOIN Positions EP ON E.POSITIONID = EP.ID
-												  LEFT JOIN AppUserRoles AUR ON E.UserId=AUR.UserId
                                                 WHERE 
-                                                  E.DELETESTATUS = 0 AND E.Active=1
-                                                ORDER BY 
-                                                  E.ROWNUM DESC";
+                                                  E.DELETESTATUS = 0";
 
         private readonly string getAllPagingSearch = @"
                                                     DECLARE @SEARCHTEXT NVARCHAR(MAX) 
@@ -51,7 +47,6 @@ namespace Vocation.Repository.CQRS.Queries
                                                       EP.[NAME] POSITION 
                                                     FROM 
                                                       EMPLOYEES E 
-                                                      LEFT JOIN CITIES CC ON E.CITYID = CC.ID 
                                                       LEFT JOIN Positions EP ON E.POSITIONID = EP.ID
 												      LEFT JOIN AppUserRoles AUR ON E.UserId=AUR.UserId
                                                     WHERE 
@@ -139,19 +134,17 @@ namespace Vocation.Repository.CQRS.Queries
                                                       E.*, 
                                                       EP.[NAME] POSITION 
                                                     FROM 
-                                                      EMPLOYEES E 
-                                                      LEFT JOIN CITIES CC ON E.CITYID = CC.ID 
+                                                      EMPLOYEE E 
                                                       LEFT JOIN Positions EP ON E.POSITIONID = EP.ID
 												      LEFT JOIN AppUserRoles AUR ON E.UserId=AUR.UserId
                                                     WHERE 
                                                       E.DELETESTATUS = 0 AND E.Active=1
                                                     ORDER BY 
-                                                      E.ROWNUM DESC OFFSET @OFFSET ROWS FETCH NEXT @LIMIT ROWS ONLY 
+                                                      E.Name DESC OFFSET @OFFSET ROWS FETCH NEXT @LIMIT ROWS ONLY 
                                                     SELECT 
                                                        COUNT(DISTINCT(E.Name)) TOTALCOUNT
                                                     FROM 
                                                       EMPLOYEES E 
-                                                      LEFT JOIN CITIES CC ON E.CITYID = CC.ID 
                                                       LEFT JOIN Positions EP ON E.POSITIONID = EP.ID 
 												      LEFT JOIN AppUserRoles AUR ON E.UserId=AUR.UserId
                                                     WHERE 
@@ -185,8 +178,7 @@ namespace Vocation.Repository.CQRS.Queries
                                                   E.*, 
                                                   EP.[NAME] POSITION  
                                                 FROM 
-                                                  EMPLOYEES E 
-                                                  LEFT JOIN CITIES CC ON E.CITYID = CC.ID 
+                                                  EMPLOYEE E 
                                                   LEFT JOIN Positions EP ON E.POSITIONID = EP.ID 
                                                 WHERE 
                                                   E.DELETESTATUS = 0 AND E.Id=@ID";
@@ -195,8 +187,7 @@ namespace Vocation.Repository.CQRS.Queries
                                                   E.*, 
                                                   EP.[NAME] POSITION  
                                                 FROM 
-                                                  EMPLOYEES E 
-                                                  LEFT JOIN CITIES CC ON E.CITYID = CC.ID 
+                                                  EMPLOYEE E 
                                                   LEFT JOIN positions EP ON E.POSITIONID = EP.ID 
                                                 WHERE 
                                                   E.DELETESTATUS = 0 AND E.UserId=@ID";

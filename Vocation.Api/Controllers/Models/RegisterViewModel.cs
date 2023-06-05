@@ -31,8 +31,6 @@ namespace Vocation.Api.Controllers.Models
         public string PhoneNumber { get; set; }
 
         public bool PasswordRecovery { get; set; }
-
-        public Employee Employee { get; set; }
-
+        //public Employee Employee { get; set; }
     }
 }

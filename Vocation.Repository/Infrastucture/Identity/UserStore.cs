@@ -18,7 +18,7 @@ namespace Vocation.Repository.Infrastucture.Identity
         Task<ApplicationUser> FindByFullNameAsync(string fullName, CancellationToken cancellationToken);
         Task<ApplicationUser> FindUniqueByEmailAsync(string email, string userId, CancellationToken cancellationToken);
         //Task<IList<ApplicationRoleUI>> GetRolesByIdAsync(string userId, CancellationToken cancellationToken);
-        Task<ApplicationUser> Block(ApplicationUser user, CancellationToken cancellationToken);
+        //Task<ApplicationUser> Block(ApplicationUser user, CancellationToken cancellationToken);
         Task<IList<ApplicationUser>> GetUsersByRoleName(string roleName, CancellationToken cancellationToken);
         Task<ApplicationUser> FindByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken);
     }
@@ -48,17 +48,14 @@ namespace Vocation.Repository.Infrastucture.Identity
                     user.Id = await connection.QuerySingleAsync<Guid>($@"
                                                                        DECLARE @MyTableVar table([ID] [uniqueidentifier]);
                                                                        INSERT INTO [dbo].[AppUsers]
-                                                                      ([AccessFailedCount]
-                                                                      ,[ConcurrencyStamp] ,[Email] ,[NormalizedEmail]
+                                                                      ([Email] ,[NormalizedEmail]
                                                                       ,[EmailConfirmed] ,[LockoutEnabled] ,[LockoutEnd]
                                                                       ,[PasswordHash] ,[PhoneNumber] ,[PhoneNumberConfirmed]
                                                                       ,[TwoFactorEnabled],[UserName] ,[NormalizedUserName]
-                                                                      ,[SecurityStamp], DisplayName)
+                                                                      ,[SecurityStamp], DisplayName,[Delete])
                                                                        OUTPUT INSERTED.[Id] INTO @MyTableVar
                                                                        VALUES
-                                                                      (0
-                                                                      ,NEWID()
-                                                                      ,@{nameof(ApplicationUser.Email)}
+                                                                      (@{nameof(ApplicationUser.Email)}
                                                                       ,@{nameof(ApplicationUser.NormalizedEmail)}
                                                                       ,1
                                                                       ,1
@@ -70,7 +67,7 @@ namespace Vocation.Repository.Infrastucture.Identity
                                                                       ,@{nameof(ApplicationUser.UserName)}
                                                                       ,@{nameof(ApplicationUser.NormalizedUserName)}
                                                                       ,@{nameof(ApplicationUser.SecurityStamp)}
-                                                                      ,@{nameof(ApplicationUser.DisplayName)})
+                                                                      ,@{nameof(ApplicationUser.DisplayName)},0)
                                                                        SELECT [ID] FROM @MyTableVar;
                                                                        ", user);
                 }
@@ -128,30 +125,30 @@ namespace Vocation.Repository.Infrastucture.Identity
                     WHERE [NormalizedUserName] = @{nameof(normalizedUserName)} and [delete]=0", new { normalizedUserName });
             }
         }
-        public async Task<ApplicationUser> Block(ApplicationUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            ApplicationUser res = new ApplicationUser();
+        //public async Task<ApplicationUser> Block(ApplicationUser user, CancellationToken cancellationToken)
+        //{
+        //    cancellationToken.ThrowIfCancellationRequested();
+        //    ApplicationUser res = new ApplicationUser();
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                await connection.OpenAsync(cancellationToken);
-                user.Active = user.Blocked;
-                user.Blocked = !user.Blocked;
+        //    using (var connection = new SqlConnection(_connectionString))
+        //    {
+        //        await connection.OpenAsync(cancellationToken);
+        //        user.Active = user.Blocked;
+        //        user.Blocked = !user.Blocked;
 
-                res = await connection.QueryFirstOrDefaultAsync<ApplicationUser>($@"UPDATE [AppUsers] SET
-                    [Blocked]=@{nameof(ApplicationUser.Blocked)}
-                    WHERE [Id] = @{nameof(ApplicationUser.Id)};
+        //        res = await connection.QueryFirstOrDefaultAsync<ApplicationUser>($@"UPDATE [AppUsers] SET
+        //            [Blocked]=@{nameof(ApplicationUser.Blocked)}
+        //            WHERE [Id] = @{nameof(ApplicationUser.Id)};
 
-                 UPDATE [Employees] SET
-                    [Active]=@{nameof(ApplicationUser.Active)}
-                    WHERE [UserId] = @{nameof(ApplicationUser.Id)}
+        //         UPDATE [Employees] SET
+        //            [Active]=@{nameof(ApplicationUser.Active)}
+        //            WHERE [UserId] = @{nameof(ApplicationUser.Id)}
 
-                    SELECT AU.*,E.Active FROM [AppUsers] AU LEFT JOIN [Employees] AS E ON  E.UserId=AU.Id  WHERE AU.[Id] = @{nameof(ApplicationUser.Id)}", user);
-            }
+        //            SELECT AU.*,E.Active FROM [AppUsers] AU LEFT JOIN [Employees] AS E ON  E.UserId=AU.Id  WHERE AU.[Id] = @{nameof(ApplicationUser.Id)}", user);
+        //    }
 
-            return res;
-        }
+        //    return res;
+        //}
 
         public async Task<IList<ApplicationUser>> GetUsersByRoleName(string roleName, CancellationToken cancellationToken)
         {

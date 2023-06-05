@@ -23,16 +23,15 @@ namespace Vocation.Repository.CQRS.Commands
             _unitOfWork = unitOfWork;
         }
 
-        private string _add = $@" INSERT Into VacationRequests(EmployeeId,StartDate,Status,CreatedDate,VacationPeriod,StartDate,DeleteStatus)
+        private string _add = $@" INSERT Into VacationRequests(EmployeeId,Status,CreatedDate,VacationPeriod,StartDate,DeleteStatus)
                                         OUTPUT Inserted.Id
                                         VALUES(@{nameof(VacationRequest.EmployeeId)},
-                                               @{nameof(VacationRequest.StartDate)},
                                                @{nameof(VacationRequest.Status)},
                                                @{nameof(VacationRequest.CreatedDate)},
                                                @{nameof(VacationRequest.VacationPeriod)},
                                                @{nameof(VacationRequest.StartDate)},
-                                               0,
-                                               NULL)";
+                                               0)";
+
         public async Task<Guid> Add(VacationRequest model)
         {
             try

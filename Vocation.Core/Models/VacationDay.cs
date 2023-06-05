@@ -9,6 +9,7 @@ namespace Vocation.Core.Models
         public Guid Id { get; set; }
         public int NumberOfDay { get; set; }
         public Guid PositionId { get; set; }
+        public string  Position { get; set; }
         public string Notes { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool DeleteStatus { get; set; }

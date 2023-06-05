@@ -63,8 +63,9 @@ namespace Vocation.Service.Services
             try
             {
                 await _vacationDayRepository.Update(model);
-                var result = await _vacationDayRepository.GetAll();
                 _unitOfWork.SaveChanges();
+                var result = await _vacationDayRepository.GetAll();
+             
                 return result;
             }
             catch
