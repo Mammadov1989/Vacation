@@ -31,7 +31,7 @@ namespace Vocation.Service.Services.Identity
         Task<ApplicationUser> FindByFullNameAsync(string fullName);
         Task<ApplicationUser> FindUniqueByEmailAsync(string email, string userId);
         Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string roleName);
-        Task<ApplicationUser> Block(ApplicationUser user);
+        //Task<ApplicationUser> Block(ApplicationUser user);
         Task<IdentityResult> ResetPassword(ApplicationUser user, string oldPassword, string newPassword);
         Task<ApplicationUser> FindByPhoneNumberAsync(string fullName);
         Task<IEnumerable<UserEmployeeModel>> GetActiveUsers();
@@ -179,11 +179,11 @@ namespace Vocation.Service.Services.Identity
         //    var result = await _userManager.GetRoleByIdAsync(userId);
         //    return result;
         //}
-        public async Task<ApplicationUser> Block(ApplicationUser user)
-        {
-            var result = await _userManager.Block(user);
-            return result;
-        }
+        //public async Task<ApplicationUser> Block(ApplicationUser user)
+        //{
+        //    var result = await _userManager.Block(user);
+        //    return result;
+        //}
 
         public async Task<IdentityResult> ResetPassword(ApplicationUser user, string oldPassword, string newPassword)
         {

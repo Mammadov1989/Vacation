@@ -92,8 +92,8 @@ namespace Vocation.Api.Controllers.Identity
                 PhoneNumber = model.PhoneNumber
             };
 
-            Employee employee = model.Employee;
-            employee.Name = model.DisplayName;
+            //Employee employee = model.Employee;
+            //employee.Name = model.DisplayName;
             var passwordErros = await _userService.ValidatePassword(model.Password);
 
             if (passwordErros != null)
@@ -104,10 +104,10 @@ namespace Vocation.Api.Controllers.Identity
             try
             {
                 var result = await _userService.CreateAsync(user, model.Password);
-                var data = await _userService.GetAllUsers(0, 1);
-                employee.UserId = data.List.First().Id;
+                //var data = await _userService.GetAllUsers(0, 1);
+                //employee.UserId = data.List.First().Id;
 
-                await _employeeService.Add(employee);
+                //await _employeeService.Add(employee);
             }
             catch (Exception e)
             {
@@ -291,12 +291,12 @@ namespace Vocation.Api.Controllers.Identity
                 PasswordHash = existUser.PasswordHash
             };
 
-            model.Employee.Name = existUser.DisplayName;
+            //model.Employee.Name = existUser.DisplayName;
 
             try
             {
                 var result = await _userService.UpdateAsync(userRequest);
-                await _employeeService.Update(model.Employee);
+                //await _employeeService.Update(model.Employee);
             }
             catch (Exception e)
             {
@@ -454,11 +454,11 @@ namespace Vocation.Api.Controllers.Identity
             {
                 // check if there's an user with the given username
                 var user = await
-                    _userService.FindByNameAsync(model.username);
+                    _userService.FindByNameAsync(model.username.ToUpper());
                 // fallback to support e-mail address instead of username
                 if (user == null && model.username.Contains("@"))
                     user = await
-                        _userService.FindByEmailAsync(model.username);
+                        _userService.FindByEmailAsync(model.username.ToUpper());
                 if (user == null
                     || !await _userService.CheckPasswordAsync(user,
                         model.password))
@@ -467,7 +467,7 @@ namespace Vocation.Api.Controllers.Identity
                     return new UnauthorizedResult();
                 }
 
-                var employee = await _employeeRepository.GetByUserIdAsync(user.Id.ToString());
+                //var employee = await _employeeRepository.GetByUserIdAsync(user.Id.ToString());
 
                 //if (user.Blocked || !employee.Active)
                 //{

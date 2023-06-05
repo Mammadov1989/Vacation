@@ -29,13 +29,12 @@ namespace Vocation.Repository.CQRS.Commands
                                                @{nameof(VacationDay.PositionId)},
                                                @{nameof(VacationDay.Notes)},
                                                @{nameof(VacationDay.CreatedDate)},
-                                               0,
-                                               NULL)";
+                                               0)";
 
         private string _update = $@"UPDATE VacationDays SET 
                                     NumberOfDay = @{nameof(VacationDay.NumberOfDay)},
                                     PositionId = @{nameof(VacationDay.PositionId)},
-                                    Notes = @{nameof(VacationDay.Notes)},
+                                    Notes = @{nameof(VacationDay.Notes)}
                                     WHERE Id = @{nameof(VacationDay.Id)}";
 
         public async Task<Guid> Add(VacationDay model)

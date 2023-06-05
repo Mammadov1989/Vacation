@@ -20,10 +20,7 @@ namespace Vocation.Repository.CQRS.Commands
         private readonly IUnitOFWork _unitOfWork;
 
         private string addSql = $@"
-                                IF NOT EXISTS ( SELECT * FROM Employees WHERE Phone=@{nameof(Employee.UserId)} 
-                                                                          OR Email=@{nameof(Employee.Email)})
-                BEGIN
-                    Insert into Employees (
+                    Insert into Employee (
                              Id
                             ,UserId
                             ,Name
@@ -36,11 +33,9 @@ namespace Vocation.Repository.CQRS.Commands
                                 @{nameof(Employee.UserId)},
                                 @{nameof(Employee.Name)},
                                 @{nameof(Employee.PositionId)},
-                                @{nameof(Employee.Email)},0)
-                END
-                ELSE SELECT NewId()";
+                                @{nameof(Employee.Email)},0)";
 
-        private string updateSql = $@"IF NOT EXISTS ( SELECT * FROM Employees WHERE Phone=@{nameof(Employee.UserId)} 
+        private string updateSql = $@"IF NOT EXISTS ( SELECT * FROM Employee WHERE UserId=@{nameof(Employee.UserId)} 
                                                                           OR Email=@{nameof(Employee.Email)}
                                                                           AND Id <> @{nameof(Employee.Id)})
                 BEGIN
@@ -52,7 +47,7 @@ namespace Vocation.Repository.CQRS.Commands
                 END
                 ELSE SELECT 'false'";
 
-        private string deleteSql = $@"Update Employees Set
+        private string deleteSql = $@"Update Employee Set
                                             DeleteStatus=1
                                                  Where Id=@{nameof(Employee.Id)}";
 

@@ -46,14 +46,14 @@ namespace Vocation.Repository.Infrastucture.Identity
                 return result;
             }
         }
-        public async Task<ApplicationUser> Block(ApplicationUser user)
-        {
-            using (var cancellationToken = new CancellationTokenSource())
-            {
-                var result = await _userStore.Block(user, cancellationToken.Token);
-                return result;
-            }
-        }
+        //public async Task<ApplicationUser> Block(ApplicationUser user)
+        //{
+        //    using (var cancellationToken = new CancellationTokenSource())
+        //    {
+        //        var result = await _userStore.Block(user, cancellationToken.Token);
+        //        return result;
+        //    }
+        //}
         //public async Task<IEnumerable<ApplicationRoleUI>> GetRoleByIdAsync(string userId)
         //{
         //    using (var cancellationToken = new CancellationTokenSource())
