@@ -27,7 +27,7 @@ namespace Vocation.Repository.CQRS.Commands
                                         VALUES(@{nameof(Department.ShortName)},
                                                @{nameof(Department.FullName)},
                                                @{nameof(Department.Notes)},
-                                               @{nameof(Department.CreatedDate)},
+                                               GetDate(),
                                                0)
         ";
 

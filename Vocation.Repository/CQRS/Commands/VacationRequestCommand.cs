@@ -26,8 +26,8 @@ namespace Vocation.Repository.CQRS.Commands
         private string _add = $@" INSERT Into VacationRequests(EmployeeId,Status,CreatedDate,VacationPeriod,StartDate,DeleteStatus)
                                         OUTPUT Inserted.Id
                                         VALUES(@{nameof(VacationRequest.EmployeeId)},
-                                               @{nameof(VacationRequest.Status)},
-                                               @{nameof(VacationRequest.CreatedDate)},
+                                               0,
+                                               GetDate(),
                                                @{nameof(VacationRequest.VacationPeriod)},
                                                @{nameof(VacationRequest.StartDate)},
                                                0)";

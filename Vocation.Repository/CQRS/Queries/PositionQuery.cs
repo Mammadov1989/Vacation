@@ -19,7 +19,9 @@ namespace Vocation.Repository.CQRS.Queries
     {
         private readonly IUnitOFWork unitOfWork;
 
-        private readonly string GetAllSql = "SELECT * FROM Positions WHERE DELETESTATUS=0 ";
+        private readonly string GetAllSql = $@"SELECT P.*, D.ShortName DepartmentName FROM Positions P
+                                            Left Join Departments D on D.Id=P.DepartmentId
+                                            WHERE P.DELETESTATUS=0 ";
 
         private readonly string GetPaginationSql = @"SELECT * FROM Positions
 		                                                    WHERE DELETESTATUS=0  
