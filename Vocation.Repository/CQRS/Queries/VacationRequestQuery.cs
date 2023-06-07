@@ -22,7 +22,9 @@ namespace Vocation.Repository.CQRS.Queries
             _unitOfWork = unitOfWork;
         }
 
-        private string _getAll = $@"SELECT * FROM VacationRequests WHERE DeleteStatus = 0 ";
+        private string _getAll = $@"SELECT *,e.Name EmployeeName FROM VacationRequests VR
+        LEFT JOIN Employee E ON VR.EmployeeId = E.ID
+        WHERE VR.DeleteStatus = 0 ";
 
         public async Task<IEnumerable<VacationRequest>> GetAll()
         {

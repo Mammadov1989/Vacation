@@ -544,6 +544,13 @@ namespace Vocation.Api.Controllers.Identity
             };
         }
 
+        [HttpGet("GetAllUsers")]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _userService.GetAllUsers();
+            return Ok(result);
+        }
+
         private async Task<TokenResponseViewModel> CreateAccessToken(ApplicationUser user, string
             refreshToken)
         {

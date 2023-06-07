@@ -25,15 +25,16 @@ namespace Vocation.Repository.CQRS.Commands
             _unitOfWork = unitOfWork;
         }
         private string _addSql = $@"
-            INSERT Into Positions(Name,CreatedDate, DeleteStatus)
+            INSERT Into Positions(Name,CreatedDate, DeleteStatus, DepartmentId)
                                         OUTPUT Inserted.Id
                                         VALUES(@{nameof(Position.Name)},
-                                               @{nameof(Position.CreatedDate)},
-                                               0)
+                                               GetDate(),0,
+                                               @{nameof(Position.DepartmentId)})
         ";
 
         private string _updateSql = $@"UPDATE Positions SET 
-                                    Name = @{nameof(Position.Name)}
+                                    Name = @{nameof(Position.Name)},
+                                    DepartmentId=@{nameof(Position.DepartmentId)}
                                     WHERE Id = @{nameof(Department.Id)}";
 
         private string _deleteSql = $@"UPDATE Positions SET DeleteStatus=1 WHERE Id=@Id";

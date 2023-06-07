@@ -131,9 +131,10 @@ namespace Vocation.Service.Services
 
                 //}
                 await _employeePositionRepository.UpdateAsync(employeePosition);
+                _unitOfWork.SaveChanges();
+
                 var data = await _employeePositionRepository.GetAllAsync();
                 return data;
-                _unitOfWork.SaveChanges();
             }
             catch (Exception ex)
             {
