@@ -90,9 +90,9 @@ namespace Vocation.Service.Services
             {
 
                 await _employeeRepository.UpdateAsync(employee);
+                _unitOfWork.SaveChanges();
 
                 var result = await _employeeRepository.GetByIdAsync(employee.Id.ToString());
-                _unitOfWork.SaveChanges();
                 return result;
             }
             catch
@@ -107,7 +107,7 @@ namespace Vocation.Service.Services
             using var transaction = _unitOfWork.BeginTransaction();
             try
             {
-                var item = await _employeeRepository.GetByUserIdAsync(id);
+                var item = await _employeeRepository.GetByIdAsync(id);
                 var res = await _employeeRepository.DeleteAsync(item.Id.ToString());
                 _unitOfWork.SaveChanges();
                 return res;

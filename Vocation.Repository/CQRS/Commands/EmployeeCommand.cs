@@ -24,7 +24,9 @@ namespace Vocation.Repository.CQRS.Commands
                              Id
                             ,UserId
                             ,Name
+                            ,SurName
                             ,PositionId
+                            ,DepartmentId
                             ,Email
                             ,DeleteStatus)
                     Output Inserted.Id 
@@ -32,20 +34,19 @@ namespace Vocation.Repository.CQRS.Commands
                                 NewId(),
                                 @{nameof(Employee.UserId)},
                                 @{nameof(Employee.Name)},
+                                @{nameof(Employee.SurName)},
                                 @{nameof(Employee.PositionId)},
+                                @{nameof(Employee.DepartmentId)},
                                 @{nameof(Employee.Email)},0)";
 
-        private string updateSql = $@"IF NOT EXISTS ( SELECT * FROM Employee WHERE UserId=@{nameof(Employee.UserId)} 
-                                                                          OR Email=@{nameof(Employee.Email)}
-                                                                          AND Id <> @{nameof(Employee.Id)})
-                BEGIN
-                            Update Employees Set
-                             Name=@{nameof(Employee.Name)}
+        private string updateSql = $@"
+                            Update Employee Set
+                             Name=@{nameof(Employee.Name)},
+                             SurName=@{nameof(Employee.SurName)}
                             ,PositionId=@{nameof(Employee.PositionId)}
+                            ,DepartmentId=@{nameof(Employee.DepartmentId)}
                             ,Email=@{nameof(Employee.Email)}
-                            Where UserId=@{nameof(Employee.UserId)}
-                END
-                ELSE SELECT 'false'";
+                            Where Id=@{nameof(Employee.Id)}";
 
         private string deleteSql = $@"Update Employee Set
                                             DeleteStatus=1
@@ -91,20 +92,12 @@ ELSE CAST (0 AS BIT) END";
         {
             try
             {
-                var exists = await _unitOfWork.GetConnection().QueryFirstOrDefaultAsync<bool>(ExistsInEmployeeSalaries, new { id }, _unitOfWork.GetTransaction());
-
-                if (!exists)
-                {
                     await _unitOfWork.GetConnection().QueryAsync(deleteSql, new { id }, _unitOfWork.GetTransaction());
                     return true;
-                }
-                {
-                    return false;
-                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
         }
 

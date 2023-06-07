@@ -82,24 +82,9 @@ namespace Vocation.Repository.CQRS.Queries.Identity
                                                       OR E.INFO LIKE @SEARCHTEXT)";
 
         private const string getAllUserSql = @"SELECT
-                                               U.*,
-                                               E.InitialBalance,
-                                               E.Salary,
-                                               E.StartDate,
-                                               E.EndDate,
-                                               E.Active,
-                                               E.Info,
-                                               E.IsHead,
-                                               E.PermissionLimit,
-                                               E.PositionId,
-                                               E.CityId,
-                                               C.NAME    AS CITY,
-                                               EP.[NAME] AS POSITION
+                                               U.*
                                                FROM dbo.AppUsers AS U
-                                               LEFT JOIN dbo.Employees AS E ON E.UserId = U.Id
-                                               LEFT JOIN dbo.Cities AS C ON E.CityId = C.Id
-                                               LEFT JOIN dbo.EmployeePosition AS EP ON E.PositionId = EP.Id
-                                               WHERE U.[Delete]=0 ORDER BY U.RowNum DESC";
+                                               WHERE U.[Delete]=0 ";
 
         private const string getPaginationSql = @"SELECT U.*,
                                                   E.InitialBalance,
