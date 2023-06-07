@@ -92,8 +92,8 @@ ELSE CAST (0 AS BIT) END";
         {
             try
             {
-                    await _unitOfWork.GetConnection().QueryAsync(deleteSql, new { id }, _unitOfWork.GetTransaction());
-                    return true;
+                await _unitOfWork.GetConnection().QueryAsync(deleteSql, new { id }, _unitOfWork.GetTransaction());
+                return true;
             }
             catch (Exception ex)
             {
