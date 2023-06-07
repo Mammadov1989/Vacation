@@ -30,10 +30,14 @@ namespace Vocation.Repository.CQRS.Queries
                                                 SELECT 
                                                   Distinct (E.Name),
                                                   E.*, 
-                                                  EP.[NAME] POSITION  
+                                                  EP.[NAME] Position  ,
+                                                  AU.UserName UserName  ,
+                                                  D.ShortName Department
                                                 FROM 
                                                   EMPLOYEE E 
                                                   LEFT JOIN Positions EP ON E.POSITIONID = EP.ID
+                                                  LEFT JOIN Departments D ON E.DepartmentId = D.ID
+                                                  LEFT JOIN AppUsers AU ON E.UserId = AU.ID
                                                 WHERE 
                                                   E.DELETESTATUS = 0";
 
